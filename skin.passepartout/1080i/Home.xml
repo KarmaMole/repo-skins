@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	Home: one large matted print on art-coloured paper (PassepartoutHome), Down reveals the rest of the
+	room (PassepartoutHomeRoom). Ids, focus map and paper wiring: Includes_Home.xml header.
+	Home is KEEP_IN_MEMORY: onload runs every time Home is shown.
+-->
+<window>
+	<defaultcontrol always="true">9001</defaultcontrol>
+	<menucontrol>9000</menucontrol>
+	<backgroundcolor>paper</backgroundcolor>
+	<onload condition="String.IsEqual(Window(Home).Property(passepartout.section),series) + !Skin.HasSetting(HideMenu.TVShows)">SetFocus(9002)</onload>
+	<onload condition="String.IsEqual(Window(Home).Property(passepartout.section),music) + !Skin.HasSetting(HideMenu.Music)">SetFocus(9003)</onload>
+	<!-- 0.9.14: the remembered section (or Films, the default) is hidden in Skin settings (HideMenu.*): focus the first
+	     word shown; its onfocus sets the section. Settings (9005) never hides. -->
+	<onload condition="[[[String.IsEmpty(Window(Home).Property(passepartout.section)) | String.IsEqual(Window(Home).Property(passepartout.section),films)] + Skin.HasSetting(HideMenu.Movies)] | [String.IsEqual(Window(Home).Property(passepartout.section),series) + Skin.HasSetting(HideMenu.TVShows)] | [String.IsEqual(Window(Home).Property(passepartout.section),music) + Skin.HasSetting(HideMenu.Music)]] + !Skin.HasSetting(HideMenu.Movies)">SetFocus(9001)</onload>
+	<onload condition="[[[String.IsEmpty(Window(Home).Property(passepartout.section)) | String.IsEqual(Window(Home).Property(passepartout.section),films)] + Skin.HasSetting(HideMenu.Movies)] | [String.IsEqual(Window(Home).Property(passepartout.section),series) + Skin.HasSetting(HideMenu.TVShows)] | [String.IsEqual(Window(Home).Property(passepartout.section),music) + Skin.HasSetting(HideMenu.Music)]] + Skin.HasSetting(HideMenu.Movies) + !Skin.HasSetting(HideMenu.TVShows)">SetFocus(9002)</onload>
+	<onload condition="[[[String.IsEmpty(Window(Home).Property(passepartout.section)) | String.IsEqual(Window(Home).Property(passepartout.section),films)] + Skin.HasSetting(HideMenu.Movies)] | [String.IsEqual(Window(Home).Property(passepartout.section),series) + Skin.HasSetting(HideMenu.TVShows)] | [String.IsEqual(Window(Home).Property(passepartout.section),music) + Skin.HasSetting(HideMenu.Music)]] + Skin.HasSetting(HideMenu.Movies) + Skin.HasSetting(HideMenu.TVShows) + !Skin.HasSetting(HideMenu.Music)">SetFocus(9003)</onload>
+	<onload condition="[[[String.IsEmpty(Window(Home).Property(passepartout.section)) | String.IsEqual(Window(Home).Property(passepartout.section),films)] + Skin.HasSetting(HideMenu.Movies)] | [String.IsEqual(Window(Home).Property(passepartout.section),series) + Skin.HasSetting(HideMenu.TVShows)] | [String.IsEqual(Window(Home).Property(passepartout.section),music) + Skin.HasSetting(HideMenu.Music)]] + Skin.HasSetting(HideMenu.Movies) + Skin.HasSetting(HideMenu.TVShows) + Skin.HasSetting(HideMenu.Music) + !Skin.HasSetting(HideMenu.Search)">SetFocus(9004)</onload>
+	<onload condition="[[[String.IsEmpty(Window(Home).Property(passepartout.section)) | String.IsEqual(Window(Home).Property(passepartout.section),films)] + Skin.HasSetting(HideMenu.Movies)] | [String.IsEqual(Window(Home).Property(passepartout.section),series) + Skin.HasSetting(HideMenu.TVShows)] | [String.IsEqual(Window(Home).Property(passepartout.section),music) + Skin.HasSetting(HideMenu.Music)]] + Skin.HasSetting(HideMenu.Movies) + Skin.HasSetting(HideMenu.TVShows) + Skin.HasSetting(HideMenu.Music) + Skin.HasSetting(HideMenu.Search)">SetFocus(9005)</onload>
+	<onload condition="String.IsEmpty(Window(Home).Property(passepartout.section)) + !Skin.HasSetting(HideMenu.Movies)">SetProperty(passepartout.section,films,home)</onload>
+	<!-- new stamp each time Home opens: the Next up plugin path changes, so it refreshes after playback -->
+	<onload>SetProperty(passepartout.reload,$INFO[System.Time(hh:mm:ss)],home)</onload>
+	<include>PP_PaperInit</include>
+	<onload condition="String.IsEqual(Window(Home).Property(passepartout.section),music)">SetProperty(TMDbHelper.Colors.SourceImage,Art(thumb)|Art(fanart),home)</onload>
+	<onload condition="!String.IsEqual(Window(Home).Property(passepartout.section),music)">SetProperty(TMDbHelper.Colors.SourceImage,Art(fanart)|Art(landscape)|Art(poster)|Art(thumb),home)</onload>
+	<onload>SetProperty(TMDbHelper.WidgetContainer,9101,home)</onload>
+	<!-- other windows must not inherit Home's container id (TMDb Helper reads it globally) -->
+	<onunload>ClearProperty(TMDbHelper.WidgetContainer,home)</onunload>
+	<include>Anim_WindowOpenClose</include>
+	<controls>
+		<include>PP_Background</include>
+		<include>Home_Data</include>
+		<include>Home_Exhibition</include>
+		<include>Home_ExhibitionSmall</include>
+		<include>Home_RoomRows</include>
+		<include>Home_CustomRows</include>
+		<include>CustomRows_Probes</include>
+		<include>PP_NowPlayingLine</include>
+		<include>Home_Nav</include>
+		<!-- section switching: the nav word in focus decides the exhibition and the paper source -->
+		<control type="group">
+			<visible>false</visible>
+		</control>
+	</controls>
+</window>
